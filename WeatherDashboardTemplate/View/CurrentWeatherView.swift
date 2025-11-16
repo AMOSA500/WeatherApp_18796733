@@ -14,14 +14,15 @@ struct CurrentWeatherView: View {
 
     var body: some View {
         VStack{
-//            Text("Image shows the information to be presented in this view")
-//            Spacer()
-//            Image("now")
-//                .resizable()
-
+            HStack{
+                Text("London").font(Font.largeTitle.bold())
+                Spacer()
+                Text("Sunday, Oct 19").font(Font.system(size: 18).bold())
+            }.padding(20)
             Spacer()
         }
-        .frame(height: 600)
+        
+        
     }
 }
 

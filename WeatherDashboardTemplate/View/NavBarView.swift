@@ -12,71 +12,26 @@ struct NavBarView: View {
     @EnvironmentObject var vm: MainAppViewModel
     
     var body: some View {
-        ZStack{
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0xF9/255, green: 0xC5/255, blue: 0x8D/255), // #F9C58D
-                    Color(red: 0xF4/255, green: 0x92/255, blue: 0xF0/255)  // #F492F0
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ).ignoresSafeArea()
-            VStack(spacing: 0) {
-                // 🔍 Search Bar
-                HStack {
-                    TextField("Enter location", text: $vm.query)
-                        .padding()
-                        .submitLabel(.search)
-                        .onSubmit { vm.submitQuery() }
-                    
-                    Button {
-                        vm.submitQuery()
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                            .font(.title2)
-                    }
-                }
-                .padding()
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                .shadow(radius: 3, y: 2)
-                .padding(.horizontal)
-                .padding(.top, 20)
+        ReusableTableShell{
+            TabView(selection: $vm.selectedTab) {
+                CurrentWeatherView()
+                    .tabItem { Label("Now", systemImage: "sun.max.fill") }
+                    .tag(0)
                 
-                // 🌤 Tabs
-                TabView(selection: $vm.selectedTab) {
-                    CurrentWeatherView()
-                        .tabItem { Label("Now", systemImage: "sun.max.fill") }
-                        .tag(0)
-                    
-                    ForecastView()
-                        .tabItem { Label("Forecast", systemImage: "calendar") }
-                        .tag(1)
-                    
-                    MapView()
-                        .tabItem { Label("Map", systemImage: "map") }
-                        .tag(2)
-                    
-                    VisitedPlacesView()
-                        .tabItem { Label("Saved", systemImage: "globe") }
-                        .tag(3)
-                }
+                ForecastView()
+                    .tabItem { Label("Forecast", systemImage: "calendar") }
+                    .tag(1)
                 
+                MapView()
+                    .tabItem { Label("Map", systemImage: "map") }
+                    .tag(2)
+                
+                VisitedPlacesView()
+                    .tabItem { Label("Saved", systemImage: "globe") }
+                    .tag(3)
             }
-        }
-        
-        .overlay {
-            if vm.isLoading {
-                ProgressView("Loading…")
-                    .padding()
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
-            }
-        }
-        .alert(item: $vm.appError) { error in
-            Alert(
-                title: Text("Error"),
-                message: Text(error.localizedDescription),
-                dismissButton: .default(Text("OK"))
-            )
+            
+
         }
     }
 }

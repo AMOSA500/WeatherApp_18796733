@@ -7,19 +7,17 @@
 
 import SwiftUI
 
-struct ReusableTableShell<Content: View>: View {
+struct ReusableSearchBar: ViewModifier {
     // This will host the tab bar, search bar, gradient, and loading overlay.
     @EnvironmentObject var vm: MainAppViewModel
-    let content: Content
-    init (@ViewBuilder _ content: () -> Content) {
-        self.content = content()
-    }
-    var body: some View {
+    
+    
+    func body(content: Content) -> some View {
         ZStack{
             LinearGradient(
                 colors: [Color.blue.opacity(0.5), Color.pink.opacity(0.5)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
+                startPoint: .leading,
+                endPoint: .trailing
             ).ignoresSafeArea()
             .edgesIgnoringSafeArea(.all)
             
@@ -45,7 +43,7 @@ struct ReusableTableShell<Content: View>: View {
                 .padding(.vertical, 20)
                    
                 // Content from navbar view
-                content
+                content.background(Color.clear)
             }
             
         }
@@ -64,5 +62,11 @@ struct ReusableTableShell<Content: View>: View {
                 dismissButton: .default(Text("OK"))
             )
         }
+    }
+}
+
+extension View {
+    func reusableSearchBar() -> some View {
+        self.modifier(ReusableSearchBar())
     }
 }

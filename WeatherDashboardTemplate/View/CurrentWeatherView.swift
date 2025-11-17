@@ -14,14 +14,20 @@ struct CurrentWeatherView: View {
 
     var body: some View {
         VStack{
-            HStack{
-                Text("London").font(Font.largeTitle.bold())
+            HStack {
+                Text("London").font(.largeTitle.bold())
                 Spacer()
-                Text("Sunday, Oct 19").font(Font.system(size: 18).bold())
-            }.padding(20)
-            Spacer()
+                Text("Sunday, Oct 19").font(.system(size: 18).bold())
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+
+            // Your weather content goes here…
+
+            Spacer(minLength: 0)
         }
-        
+        .background(Color.clear)
+        .reusableSearchBar()
         
     }
 }

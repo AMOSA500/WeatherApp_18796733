@@ -29,21 +29,21 @@ struct CurrentWeatherView: View {
                     Text("15 °C")
                         .font(.system(size: 60, design: .rounded))
                         .bold()
-                        .padding(.top, 20)
+                        .padding(.top, 10)
                     
                     Spacer()
                     
                     Image(systemName: "cloud.sun.fill")
                         .font(.system(size: 60))
                         .padding(.horizontal,5)
-                        .padding(.top, 20)
+                        .padding(.top, 10)
                 }
                 // Rain condition
                 HStack{
                     Text("Light Rain").bold().font(.system(size: 24))
                     Spacer()
                     Text("Wind: 10 m/s")
-                }.padding(.horizontal,10).padding(.vertical, 5)
+                }.padding(.horizontal,10).padding(.top, 1)
                 
                 // High and Low condition
                 HStack(spacing: 30){
@@ -69,10 +69,10 @@ struct CurrentWeatherView: View {
                         .font(.system(size: 24))
                         .foregroundStyle(.gray)
                 }.frame(
-                        maxWidth: .infinity,
-                        alignment: .leading
-                    )
-                .padding(.vertical, 20)
+                    maxWidth: .infinity,
+                    alignment: .leading
+                )
+                .padding(.vertical, 5)
                 
                 // Pressure, Sunrise and Sunset
                 VStack{
@@ -81,11 +81,57 @@ struct CurrentWeatherView: View {
                             .bold()
                             .font(Font.system(size: 20))
                             .foregroundStyle(.blue)
-                        Text("Pressure").bold().font(.system(size: 20))
+                            .frame(width: 40, alignment: .leading)
+                        Text("Pressure").font(.system(size: 24))
                         Spacer()
                         Text("1013 hPa").font(.system(size: 20))
-                    }
+                    }.padding(.bottom, 10)
+                    // Sunrise
+                    HStack{
+                        Image(systemName: "sunrise.fill")
+                            .bold()
+                            .font(Font.system(size: 20))
+                            .foregroundStyle(.blue)
+                            .frame(width: 40, alignment: .leading)
+                        Text("Sunrise").font(.system(size: 24))
+                        Spacer()
+                        Text("07:31").font(.system(size: 20))
+                    }.padding(.bottom, 10)
+                    
+                    // Sunset
+                    HStack{
+                        Image(systemName: "sunset.fill")
+                            .bold()
+                            .font(Font.system(size: 20))
+                            .foregroundStyle(.blue)
+                            .frame(width: 40, alignment: .leading)
+                        Text("Sunset").font(.system(size: 24))
+                        Spacer()
+                        Text("17:59").font(.system(size: 20))
+                    }.padding(.bottom, 10)
+                    
                 }
+                Divider()
+                ZStack{
+                    HStack(spacing: 10){
+                        Image(systemName: "cloud.sun.fill")
+                            .font(.system(size: 60))
+                            .padding(.horizontal,5)
+                            .padding(.top, 10)
+                            .foregroundStyle(.green)
+                        
+                        Text("Mild weather - a light sweeter should do.")
+                            .font(Font.system(size: 20))
+                        
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(5)
+                    
+                    
+                }.background(
+                    .ultraThinMaterial,
+                    in: RoundedRectangle(cornerRadius: 15)
+                )
+                
                 
             }
             .padding()
@@ -95,7 +141,7 @@ struct CurrentWeatherView: View {
                     RoundedRectangle(cornerRadius: 15)
                         .stroke(Color.gray.opacity(0.2), style: StrokeStyle(lineWidth: 0.7))
                         .fill(.ultraThinMaterial.opacity(0.1))
-                        .shadow(radius: 7, x: 6, y: 6)
+                        .shadow(radius: 5, x: 5, y: 5)
                 }
             )
             

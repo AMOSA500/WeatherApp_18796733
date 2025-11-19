@@ -1,5 +1,5 @@
 //
-//  ReusableTableShell.swift
+//  ReusableSearchBar.swift
 //  WeatherDashboardTemplate
 //
 //  Created by Nafiu Amosa on 16/11/2025.
@@ -25,7 +25,7 @@ struct ReusableSearchBar: ViewModifier {
                 // 🔍 Search Bar
                 HStack {
                     TextField("Enter location", text: $vm.query)
-                        .padding(.bottom,  10)
+                        .padding(.bottom,  0)
                         .submitLabel(.search)
                         .onSubmit { vm.submitQuery() }
                     

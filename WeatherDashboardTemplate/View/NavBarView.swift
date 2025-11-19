@@ -15,28 +15,21 @@ struct NavBarView: View {
         
             TabView(selection: $vm.selectedTab) {
                 CurrentWeatherView()
-                    .background(Color.clear)
                     .tabItem { Label("Now", systemImage: "sun.max.fill") }
                     .tag(0)
 
                 ForecastView()
-                    .background(Color.clear)
                     .tabItem { Label("Forecast", systemImage: "calendar") }
                     .tag(1)
 
                 MapView()
-                    .background(Color.clear)
                     .tabItem { Label("Map", systemImage: "map") }
                     .tag(2)
 
                 VisitedPlacesView()
-                    .background(Color.clear)
                     .tabItem { Label("Saved", systemImage: "globe") }
                     .tag(3)
             }
-            .background(Color.clear)
-            // iOS 16+: make the tab bar transparent
-            .toolbarBackground(.hidden, for: .tabBar)
         
     }
 }

@@ -15,9 +15,9 @@ struct ReusableSearchBar: ViewModifier {
     func body(content: Content) -> some View {
         ZStack{
             LinearGradient(
-                colors: [Color.blue.opacity(0.5), Color.pink.opacity(0.5)],
-                startPoint: .leading,
-                endPoint: .trailing
+                colors: [Color.blue.opacity(0.5), Color.pink.opacity(0.2)],
+                startPoint: .bottomLeading,
+                endPoint: .topTrailing
             ).ignoresSafeArea()
             .edgesIgnoringSafeArea(.all)
             
@@ -25,7 +25,7 @@ struct ReusableSearchBar: ViewModifier {
                 // 🔍 Search Bar
                 HStack {
                     TextField("Enter location", text: $vm.query)
-                        .padding(0)
+                        .padding(.bottom,  10)
                         .submitLabel(.search)
                         .onSubmit { vm.submitQuery() }
                     
@@ -41,7 +41,8 @@ struct ReusableSearchBar: ViewModifier {
                 .shadow(radius: 4, y: 2)
                 .padding(.horizontal)
                 .padding(.vertical, 20)
-                   
+                
+                Divider()
                 // Content from navbar view
                 content.background(Color.clear)
             }

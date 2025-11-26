@@ -15,13 +15,17 @@ final class MainAppViewModel: ObservableObject {
     @Published var currentWeather: Weather?
     @Published var forecast: [Weather] = []
     @Published var pois: [AnnotationModel] = []
-    @Published var mapRegion = MKCoordinateRegion()
+    //@Published var mapRegion = MKCoordinateRegion()
     @Published var visited: [Place] = []
     @Published var isLoading = false
     @Published var appError: WeatherMapError?
     @Published var activePlaceName: String = ""
-    private let defaultPlaceName = "London"
+    private let defaultPlaceName = "Lagos, Nigeria" // Hardcoded since GPS usage is not within the scope
     @Published var selectedTab: Int = 0
+    @Published var mapPosition: MapCameraPosition = .automatic
+    
+    let geocode = CLGeocoder()
+
 
     /// Create and use a WeatherService model (class) to manage fetching and decoding weather data
     private let weatherService = WeatherService()
@@ -77,6 +81,22 @@ final class MainAppViewModel: ObservableObject {
     func loadDefaultLocation() async {
         // Attempts to select and load the hardcoded default location name.
         // If an error occurs during selection, sets an app error.
+        do {
+            let placemarks = try await geocode.geocodeAddressString(defaultPlaceName)
+            guard let place = placemarks.first, let location = place.location else {
+                appError = .decodingError((any Error).self as! Error)
+                return
+            }
+            let coord = location.coordinate
+            mapPosition = .region(
+                MKCoordinateRegion(
+                    center: coord,
+                    span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+                )
+            )
+        }catch {
+            appError = .geocodingFailed(defaultPlaceName)
+        }
     }
 
     func search() async throws {

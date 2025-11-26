@@ -71,3 +71,4 @@ extension View {
         self.modifier(ReusableSearchBar())
     }
 }
+

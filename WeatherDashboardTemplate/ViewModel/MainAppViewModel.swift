@@ -94,6 +94,7 @@ final class MainAppViewModel: ObservableObject {
                     span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
                 )
             )
+            print(mapPosition)
         }catch {
             appError = .geocodingFailed(defaultPlaceName)
         }

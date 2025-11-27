@@ -17,6 +17,7 @@ struct MapView: View {
         VStack{
             // Map Display
             VStack{
+                
                 Map(position: $vm.mapPosition).frame(height: 300)
             }
             // Text detail
@@ -32,6 +33,7 @@ struct MapView: View {
                     .ignoresSafeArea(edges: .all)
                 
                 VStack(alignment: .leading){
+                    
                     ForEach(1...3, id: \.self) { _ in
                         HStack{
                             Image(systemName: "mappin.circle.fill")

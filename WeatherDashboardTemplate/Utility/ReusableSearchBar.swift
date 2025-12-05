@@ -43,7 +43,8 @@ struct ReusableSearchBar: ViewModifier {
                 .padding(.vertical, 20)
                 
                 Divider()
-                // Content from navbar view
+                
+                // Content from any view appears here
                 content.background(Color.clear)
             }
             

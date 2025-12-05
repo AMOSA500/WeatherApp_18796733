@@ -60,6 +60,7 @@ final class LocationManager {
                     longitude: coordinate.longitude
                 )
             }
+            
             return annotations
             
         } catch {

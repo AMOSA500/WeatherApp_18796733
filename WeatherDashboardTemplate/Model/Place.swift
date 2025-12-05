@@ -3,8 +3,8 @@
 //  WeatherDashboardTemplate
 //
 //  Created by girish lukka on 18/10/2025.
-//
-// MARK:  Basic data models - edit them to create a relationship
+//  Updated by Nafiu Amosa on 02/12/2025.
+
 
 import SwiftData
 import CoreLocation
@@ -15,19 +15,25 @@ final class Place {
     var name: String
     var latitude: Double
     var longitude: Double
-    var lastUsedAt: Date 
+    var lastUsedAt: Date
+    
+    // Relationship: one Place belongs to many Annotations
+    @Relationship(deleteRule: .cascade, inverse: \AnnotationModel.place)
+    var annotations: [AnnotationModel] = []
 
     init(
         id: UUID = UUID(),
         name: String,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        pois: [AnnotationModel]
     ) {
         self.id = id
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
         self.lastUsedAt = .now
+        self.annotations = pois
     }
 }
 
@@ -37,13 +43,14 @@ final class AnnotationModel: Identifiable {
     var name: String
     var latitude: Double
     var longitude: Double
+    
+    // Relationship: each Annotation belongs to one Place
+    var place: Place?
 
-
-    init(name: String, latitude: Double, longitude: Double) {
+    init(name: String, latitude: Double, longitude: Double, place: Place? = nil) {
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
-
+        self.place = place
     }
-
 }

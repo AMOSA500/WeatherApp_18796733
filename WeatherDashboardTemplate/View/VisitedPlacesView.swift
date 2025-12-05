@@ -24,7 +24,8 @@ struct VisitedPlacesView: View {
 
             Spacer()
         }
-        .frame(height: 600)
+        
+        .reusableSearchBar()
     }
 }
 

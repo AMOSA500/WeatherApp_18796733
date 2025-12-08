@@ -116,7 +116,7 @@ final class MainAppViewModel: ObservableObject {
             return
         }
         // Filter by name case-insensitively
-        var predicate = #Predicate<Place> { place in
+        let predicate = #Predicate<Place> { place in
             place.name.localizedStandardContains(trimmed)
         }
         let descriptor = FetchDescriptor<Place>(
@@ -220,10 +220,22 @@ final class MainAppViewModel: ObservableObject {
         
     }
     
-    func loadLocation(fromPlace place: Place) async{
+    func loadLocation(fromPlace place: Place) async {
         // Sets loading state, then attempts to load all data for an existing `Place` object.
         // Updates the place's `lastUsedAt` and saves the context upon success.
         // Catches and sets `appError` for any failure during the load process.
+        isLoading = true
+        do {
+            try await loadAll(for: place)
+            // Persist most-recent usage
+            place.lastUsedAt = Date()
+            try? context.save()
+            activePlaceName = place.name
+            isLoading = false
+        } catch {
+            isLoading = false
+            appError = .decodingError(error)
+        }
     }
     
     private func revertToDefaultWithAlert(message: String) async {
@@ -238,24 +250,89 @@ final class MainAppViewModel: ObservableObject {
         // Sets `activePlaceName` and prints a loading message.
         // Always refreshes weather data from the API.
         // Checks if the `Place` object has existing annotations (POIs).
-        // If annotations are empty, fetches new POIs via `MKLocalSearch`, converts them to `AnnotationModel`s, adds them to the `Place`, saves the context, and sets `self.pois`.
+        // If annotations are empty, fetches new POIs via `LocationManager`, adds them to the `Place`, saves the context, and sets `self.pois`.
         // If annotations exist, uses the cached list for `self.pois`.
         // Calls `focus(on:zoom:)` to update the map view.
         // Ensures the place is at the top of the `visited` list (if not already).
+        
         activePlaceName = place.name
         isLoading = true
-        
-        /// Todo - Review the WeatherResponse Model
-        let weather = try await weatherService.fetchWeather(lat: place.latitude, lon: place.longitude)
-        
-        
-        
+
+        do {
+            // Refresh weather from API (ignore the result for now if model is pending)
+            // let weather = try await weatherService.fetchWeather(lat: place.latitude, lon: place.longitude)
+            // self.currentWeather = weather.current
+            // self.forecast = weather.forecast
+
+            // Use cached annotations if present; otherwise fetch and cache
+            if place.annotations.isEmpty {
+                let fetchedPOIs = try await locationManager.findPOIs(
+                    lat: place.latitude,
+                    lon: place.longitude,
+                    limit: 5
+                )
+                place.annotations = fetchedPOIs
+                try? context.save()
+                self.pois = fetchedPOIs
+            } else {
+                self.pois = place.annotations
+            }
+
+            // Focus map on this place
+            mapRegion = .region(
+                MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude),
+                    span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+                )
+            )
+
+            // Move this place to top of visited (most recent)
+            place.lastUsedAt = Date()
+            try? context.save()
+            if let idx = visited.firstIndex(where: { $0.id == place.id }) {
+                // Reorder locally to reflect most-recent-first
+                var copy = visited
+                let item = copy.remove(at: idx)
+                copy.insert(item, at: 0)
+                visited = copy
+            } else {
+                // If not present for some reason, insert it at the front
+                visited.insert(place, at: 0)
+            }
+
+            isLoading = false
+        } catch {
+            // On failure, surface error and keep previous state as much as possible
+            isLoading = false
+            appError = .decodingError(error)
+            throw error
+        }
     }
     
     func delete(place: Place) {
-        // Deletes the given `Place` object from the ModelContext and removes it from the `visited` array.
-        // Attempts to save the context.
+        /// Delete from visited array
+        if let placeId = visited.firstIndex(where: {$0.id == place.id}){
+            visited.remove(at: placeId)
+        }
+        
+        /// Delete from swift data
+        context.delete(place)
+        
+        do{
+            try context.save()
+            /// If the deleted place was the active one, then set the first place in visited as a sensible default
+            if activePlaceName == place.name {
+                activePlaceName = visited.first?.name ?? ""
+            }
+        }catch{
+            /// If there was an error deleting a place, return the place back to visited array
+            if visited.firstIndex(where: {$0.name == place.name}) == nil{
+                visited.insert(place, at: 0)
+            }
+            appError = .decodingError(error)
+        }
+        
+        
     }
     
 }
-

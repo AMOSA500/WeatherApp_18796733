@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "ACDCEABD-BF5D-4D29-AFF3-46977D2E7B09"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6190DECE-F89F-402C-82E0-E8B5680C7DC2"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherDashboardTemplate/ViewModel/MainAppViewModel.swift"
+            startingColumnNumber = "62"
+            endingColumnNumber = "76"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "search()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

@@ -33,6 +33,17 @@ class DateFormatterUtils {
         return dateFormatter
     }()
 
+    static let prettyDateTimeWithZone: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMM yyyy 'at' HH:mm:ss zzz"
+        return dateFormatter
+    }()
+
+    static func formattedPrettyDateTimeWithZone(from timestamp: TimeInterval) -> String {
+        let date = Date(timeIntervalSince1970: timestamp)
+        return prettyDateTimeWithZone.string(from: date)
+    }
+
     static func formattedDate(from timestamp: Int, format: String) -> String {
         let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
         let dateFormatter = DateFormatter()

@@ -83,8 +83,15 @@ struct VisitedPlacesView: View {
                     }
                     
                 }
-                
                 .listStyle(.plain)
+                // list is up-to-date and sorted whenever it appears
+                .onAppear {
+                    withAnimation {
+                        vm.visited = vm.visited.sorted {
+                            ($0.lastUsedAt) > ($1.lastUsedAt)
+                        }
+                    }
+                }
             }
         }
         .reusableSearchBar()

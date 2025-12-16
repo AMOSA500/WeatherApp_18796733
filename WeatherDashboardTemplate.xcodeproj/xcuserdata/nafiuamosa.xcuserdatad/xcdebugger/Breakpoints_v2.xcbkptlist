@@ -13,11 +13,27 @@
             continueAfterRunningActions = "No"
             filePath = "WeatherDashboardTemplate/ViewModel/MainAppViewModel.swift"
             startingColumnNumber = "62"
-            endingColumnNumber = "76"
-            startingLineNumber = "112"
-            endingLineNumber = "112"
+            endingColumnNumber = "62"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "search()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "727B0C8D-04D8-49D5-B659-7F258F5BA028"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WeatherDashboardTemplate/ViewModel/WeatherService.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
+            landmarkName = "WeatherService"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

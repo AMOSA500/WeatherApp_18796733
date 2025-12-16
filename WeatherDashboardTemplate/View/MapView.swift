@@ -31,16 +31,41 @@ struct MapView: View {
             ZStack{
                 HStack{
                     List(vm.pois) { poi in
-                        HStack{
-                            Image(systemName: "mappin.circle.fill")
-                                .foregroundColor(Color.yellow)
-                            Text(poi.name).foregroundColor(Color.white)
+                        Button {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                vm.focus(
+                                    on: CLLocationCoordinate2D(
+                                        latitude: poi.latitude,
+                                        longitude: poi.longitude
+                                    )
+                                )
+                                vm.selectedTab = 2
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "mappin.circle.fill")
+                                    .foregroundColor(Color.yellow)
+                                    .scaleEffect(1.0) // base
+                                Text(poi.name)
+                                    .foregroundColor(Color.white)
+                            }
+                            .listRowBackground(Color.black.opacity(0.4))
+                            .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                            .padding(.horizontal, 30)
+                            // Subtle press feedback
+                            .contentShape(Rectangle())
+                            .animation(.easeInOut(duration: 0.2), value: vm.selectedTab)
                         }
-                        .listRowBackground(Color.black.opacity(0.4))
+                        .buttonStyle(.plain)
+                        .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-
-                        .padding(.horizontal, 30)
-                        
+                        // Row appear animation
+                        .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.96)),
+                                                removal: .opacity))
+                        .onAppear {
+                            // Animate each row as it appears (use id to stagger if desired)
+                            withAnimation(.easeOut(duration: 0.35)) {}
+                        }
                     }
                     .listStyle(.plain)
                     .listRowSpacing(1)
@@ -50,6 +75,7 @@ struct MapView: View {
                         Image("poii")
                         .resizable()
                         .scaledToFit()
+                        .blur(radius: 5)
                         .cornerRadius(0)
                 )
             }.offset(y: -10)

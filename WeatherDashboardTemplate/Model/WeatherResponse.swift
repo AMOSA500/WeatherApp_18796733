@@ -2,7 +2,6 @@
 //  WeatherResponse.swift
 //  WeatherDashboardTemplate
 //
-//  Created by girish lukka on 18/10/2025.
 //  Updated by Nafiu Amosa on 02/12/2025
 
 import Foundation
@@ -12,31 +11,33 @@ import Foundation
 //
 //   let weatherResponse = try? JSONDecoder().decode(WeatherResponse.self, from: jsonData)
 
-// MARK:  You can use this file however you will not get any credit for it. You must create your own WeatherResponse that is specific for your app and that it is efficient
-
 import Foundation
 
 // MARK: - WeatherResponse
 struct WeatherResponse: Codable {
     let coord: Coord
-    let weather: [Weather]        // short description + icon
-    let main: Main                // temperature, humidity, pressure
-    let wind: Wind?               // optional, not always present
-    let clouds: Clouds?           // optional
-    let rain: Rain?               // optional
-    let dt: Date                  // timestamp converted to Date
-    let sys: Sys                  // country, sunrise/sunset
-    let name: String              // city name
+    let weather: [Weather]
+    let main: Main
+    let wind: Wind?
+    let rain: Rain?
+    let dt: Date
+    let sys: Sys
+    let name: String
 
     enum CodingKeys: String, CodingKey {
-        case coord, weather, main, wind, clouds, rain, dt, sys, name
+        case coord, weather, main, wind, rain, dt, sys, name
     }
 }
 
 // MARK: - Coord
 struct Coord: Codable {
-    let lon: Double
-    let lat: Double
+    let longitude: Double
+    let latitude: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case longitude = "lon"
+        case latitude  = "lat"
+    }
 }
 
 // MARK: - Main
@@ -59,9 +60,14 @@ struct Main: Codable {
 
 // MARK: - Weather
 struct Weather: Codable {
-    let main: String
+    let name: String
     let description: String
     let icon: String
+    
+    enum CodingKeys: String, CodingKey {
+        case name = "main"
+        case description, icon
+    }
 }
 
 // MARK: - Wind
@@ -70,14 +76,10 @@ struct Wind: Codable {
     let deg: Int
 }
 
-// MARK: - Clouds
-struct Clouds: Codable {
-    let all: Int
-}
 
 // MARK: - Rain
 struct Rain: Codable {
-    let oneHour: Double
+    let oneHour: Double?
 
     enum CodingKeys: String, CodingKey {
         case oneHour = "1h"
@@ -90,7 +92,4 @@ struct Sys: Codable {
     let sunrise: Date
     let sunset: Date
 
-    enum CodingKeys: String, CodingKey {
-        case country, sunrise, sunset
-    }
 }

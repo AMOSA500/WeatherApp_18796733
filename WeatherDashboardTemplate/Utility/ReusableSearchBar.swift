@@ -27,10 +27,10 @@ struct ReusableSearchBar: ViewModifier {
                     TextField("Enter location", text: $vm.query)
                         .padding(.bottom,  0)
                         .submitLabel(.search)
-                        .onSubmit { vm.submitQuery() }
+                        .onSubmit { Task { try await vm.search() } }
                     
                     Button {
-                        vm.submitQuery()
+                        Task { try await vm.search() }
                     } label: {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)

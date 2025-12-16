@@ -12,13 +12,19 @@ import SwiftData
 struct CurrentWeatherView: View {
     @EnvironmentObject var vm: MainAppViewModel
     
+    let cat = WeatherAdviceCategory(rawValue: "warm") ?? .unknown
+    
     var body: some View {
         // Your weather content goes here…
         VStack{
             HStack {
-                Text("London").font(.largeTitle.bold())
+                Text(vm.activePlaceName).font(.largeTitle.bold())
                 Spacer()
-                Text("Sunday, Oct 19").font(.system(size: 18).bold())
+                if Optional(vm.currentWeather?.dt) != nil {
+                    Text("Sunday, Oct 19 ")
+                    .font(.system(size: 18).bold())
+                }
+                
             }
             .padding(.horizontal, 20)
             .padding(.top, 5)
@@ -26,17 +32,19 @@ struct CurrentWeatherView: View {
             VStack {
                 // Temperature Condition
                 HStack {
-                    Text("15 °C")
+                    Text("\(Int(vm.currentWeather?.main.temp ?? 0)) °C")
                         .font(.system(size: 60, design: .rounded))
                         .bold()
                         .padding(.top, 10)
                     
                     Spacer()
                     
-                    Image(systemName: "cloud.sun.fill")
+                    Image(
+                        systemName: systemIcon(for: "\(vm.currentWeather?.weather[0].icon ?? "unknown")"))
                         .font(.system(size: 60))
                         .padding(.horizontal,5)
                         .padding(.top, 10)
+                        .foregroundStyle(cat.color)
                 }
                 // Rain condition
                 HStack{

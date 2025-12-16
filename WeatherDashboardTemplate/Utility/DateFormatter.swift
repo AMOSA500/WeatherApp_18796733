@@ -38,6 +38,18 @@ class DateFormatterUtils {
         dateFormatter.dateFormat = "dd MMM yyyy 'at' HH:mm:ss zzz"
         return dateFormatter
     }()
+    
+    static let weekdayMonthDay: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale.autoupdatingCurrent
+        dateFormatter.dateFormat = "EEEE, MMM d"
+        return dateFormatter
+    }()
+
+    static func formattedWeekdayMonthDay(from timestamp: TimeInterval) -> String {
+        let date = Date(timeIntervalSince1970: timestamp)
+        return weekdayMonthDay.string(from: date)
+    }
 
     static func formattedPrettyDateTimeWithZone(from timestamp: TimeInterval) -> String {
         let date = Date(timeIntervalSince1970: timestamp)

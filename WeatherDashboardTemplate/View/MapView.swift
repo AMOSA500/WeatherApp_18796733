@@ -17,7 +17,11 @@ struct MapView: View {
     var body: some View {
         VStack{
             // Map Display
-            Map(position: $vm.mapRegion)
+            Map(position: $vm.mapRegion) {
+                ForEach(vm.pois) { poi in
+                    Marker(poi.name, coordinate: CLLocationCoordinate2D(latitude: poi.latitude, longitude: poi.longitude))
+                }
+            }
                 .frame(height: 300)
                 
             // Text detail

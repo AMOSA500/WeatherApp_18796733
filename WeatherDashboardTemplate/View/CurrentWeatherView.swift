@@ -23,10 +23,10 @@ struct CurrentWeatherView: View {
         // Your weather content goes here…
         VStack{
             HStack {
-                Text(vm.activePlaceName).font(.largeTitle.bold())
+                Text(vm.activePlaceName).font(.title.bold())
                 Spacer()
                 Text(DateFormatterUtils.formattedWeekdayMonthDay(from: TimeInterval(vm.currentWeather?.dt ?? 0)))
-                .font(.system(size: 18).bold())
+                .font(.system(size: 14).bold())
                 
             }
             .padding(.horizontal, 20)

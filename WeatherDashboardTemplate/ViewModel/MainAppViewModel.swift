@@ -265,17 +265,20 @@ final class MainAppViewModel: ObservableObject {
                 self.pois = place.annotations
             }
 
-            // Focus map on this place
-            focus(on: CLLocationCoordinate2D(latitude: place.latitude, longitude: place.longitude))
-            
+            mapRegion = .region(
+                MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(
+                        latitude: place.latitude,
+                        longitude: place.longitude
+                    ),
+                    span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+                )
+            )
             
             /// Fetches weather data
             let weather = try await weatherService.fetchWeather(city: place.name)
             self.currentWeather = weather
     
-            print(
-                "\(DateFormatterUtils.formattedWeekdayMonthDay(from: TimeInterval(currentWeather?.dt ?? 0)))"
-            )
             
             // Move this place to top of visited (most recent)
             place.lastUsedAt = Date()

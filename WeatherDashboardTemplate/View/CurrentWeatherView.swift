@@ -12,7 +12,12 @@ import SwiftData
 struct CurrentWeatherView: View {
     @EnvironmentObject var vm: MainAppViewModel
     
-    let cat = WeatherAdviceCategory(rawValue: "warm") ?? .unknown
+    var category: WeatherAdviceCategory{
+        guard let temp = vm.currentWeather?.main.temp else {
+            return .unknown
+        }
+        return WeatherAdviceCategory.from(temp: temp, description: "")
+    }
     
     var body: some View {
         // Your weather content goes here…
@@ -20,10 +25,8 @@ struct CurrentWeatherView: View {
             HStack {
                 Text(vm.activePlaceName).font(.largeTitle.bold())
                 Spacer()
-                if Optional(vm.currentWeather?.dt) != nil {
-                    Text("Sunday, Oct 19 ")
-                    .font(.system(size: 18).bold())
-                }
+                Text(DateFormatterUtils.formattedWeekdayMonthDay(from: TimeInterval(vm.currentWeather?.dt ?? 0)))
+                .font(.system(size: 18).bold())
                 
             }
             .padding(.horizontal, 20)
@@ -40,28 +43,40 @@ struct CurrentWeatherView: View {
                     Spacer()
                     
                     Image(
-                        systemName: systemIcon(for: "\(vm.currentWeather?.weather[0].icon ?? "unknown")"))
+                        systemName: systemIcon(for: "\(vm.currentWeather?.weather[0].icon ?? "N/A")"))
                         .font(.system(size: 60))
                         .padding(.horizontal,5)
                         .padding(.top, 10)
-                        .foregroundStyle(cat.color)
+                        .foregroundStyle(category.color)
                 }
                 // Rain condition
                 HStack{
-                    Text("Light Rain").bold().font(.system(size: 24))
+                    Text(
+                        "\(vm.currentWeather?.weather[0].description ?? "N/A")".capitalized
+                    )
+                        .bold()
+                        .font(.system(size: 24))
                     Spacer()
-                    Text("Wind: 10 m/s")
+                    Text("Wind: \(String(format: "%.1f", vm.currentWeather?.wind?.speed ?? 0.0)) m/s")
                 }.padding(.horizontal,10).padding(.top, 1)
                 
                 // High and Low condition
                 HStack(spacing: 30){
                     HStack{
                         Image(systemName: "arrow.up").bold().font(Font.system(size: 18))
-                        Text("15 °C").bold().font(.system(size: 18))
+                        Text(
+                            "\(String(format: "%.1f", vm.currentWeather?.main.tempMax ?? 0.0)) °C"
+                        )
+                        .bold()
+                        .font(.system(size: 18))
                     }
                     HStack{
                         Image(systemName: "arrow.down").bold().font(Font.system(size: 18))
-                        Text("12 °C").bold().font(.system(size: 18))
+                        Text(
+                            "\(String(format: "%.1f", vm.currentWeather?.main.tempMin ?? 0.0)) °C"
+                        )
+                        .bold()
+                        .font(.system(size: 18))
                     }
                     Spacer()
                     
@@ -92,7 +107,8 @@ struct CurrentWeatherView: View {
                             .frame(width: 40, alignment: .leading)
                         Text("Pressure").font(.system(size: 24))
                         Spacer()
-                        Text("1013 hPa").font(.system(size: 20))
+                        Text("\(vm.currentWeather?.main.pressure ?? 0) hPa")
+                        .font(.system(size: 20))
                     }.padding(.bottom, 10)
                     // Sunrise
                     HStack{
@@ -103,7 +119,15 @@ struct CurrentWeatherView: View {
                             .frame(width: 40, alignment: .leading)
                         Text("Sunrise").font(.system(size: 24))
                         Spacer()
-                        Text("07:31").font(.system(size: 20))
+                        Text(
+                            DateFormatterUtils
+                                .formattedDate24Hour(
+                                    from: TimeInterval(
+                                        vm.currentWeather?.sys.sunrise ?? 0
+                                    )
+                                )
+                        )
+                            .font(.system(size: 20))
                     }.padding(.bottom, 10)
                     
                     // Sunset
@@ -115,21 +139,26 @@ struct CurrentWeatherView: View {
                             .frame(width: 40, alignment: .leading)
                         Text("Sunset").font(.system(size: 24))
                         Spacer()
-                        Text("17:59").font(.system(size: 20))
+                        Text(DateFormatterUtils
+                            .formattedDate24Hour(
+                                from: TimeInterval(
+                                    vm.currentWeather?.sys.sunset ?? 0
+                                )
+                            )).font(.system(size: 20))
                     }.padding(.bottom, 10)
                     
                 }
                 Divider()
                 ZStack{
                     HStack(spacing: 10){
-                        Image(systemName: "cloud.sun.fill")
+                        Image(systemName: systemIcon(for: "\(vm.currentWeather?.weather[0].icon ?? "N/A")"))
                             .font(.system(size: 60))
                             .padding(.horizontal,5)
                             .padding(.top, 10)
                             .foregroundStyle(.green)
                         
-                        Text("Mild weather - a light sweeter should do.")
-                            .font(Font.system(size: 20))
+                        Text(category.adviceText)
+                            .font(Font.system(size: 14))
                         
                     }.frame(maxWidth: .infinity, alignment: .leading)
                         .padding(5)

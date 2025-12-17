@@ -272,8 +272,10 @@ final class MainAppViewModel: ObservableObject {
             /// Fetches weather data
             let weather = try await weatherService.fetchWeather(city: place.name)
             self.currentWeather = weather
-            
-            print(systemIcon(for: "\(currentWeather?.weather[0].icon ?? "unknown")"))
+    
+            print(
+                "\(DateFormatterUtils.formattedWeekdayMonthDay(from: TimeInterval(currentWeather?.dt ?? 0)))"
+            )
             
             // Move this place to top of visited (most recent)
             place.lastUsedAt = Date()

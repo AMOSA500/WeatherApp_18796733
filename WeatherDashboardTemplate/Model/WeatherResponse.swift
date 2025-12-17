@@ -20,7 +20,7 @@ struct WeatherResponse: Codable {
     let main: Main
     let wind: Wind?
     let rain: Rain?
-    let dt: Date
+    let dt: Int
     let sys: Sys
     let name: String
 
@@ -89,7 +89,7 @@ struct Rain: Codable {
 // MARK: - Sys
 struct Sys: Codable {
     let country: String
-    let sunrise: Date
-    let sunset: Date
+    let sunrise: Int
+    let sunset: Int
 
 }

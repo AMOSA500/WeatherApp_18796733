@@ -3,7 +3,7 @@
 //  WeatherDashboard
 //
 //  Created by girish lukka on 11/10/2025.
-//
+//  Created by Nafiu Amosa on 11/11/2025.
 
 import Foundation
 import SwiftUI
@@ -20,17 +20,17 @@ enum WeatherAdviceCategory: String {
         else { return .hot }
     }
 
-    var icon: String {
-        switch self {
-        case .freezing: return "snowflake"
-        case .cold: return "cloud.snow.fill"
-        case .mild: return "cloud.sun.fill"
-        case .warm: return "sun.max.fill"
-        case .hot: return "thermometer.sun.fill"
-        case .unknown: return "questionmark.circle"
-        }
-    }
-    
+//    var icon: String {
+//        switch self {
+//        case .freezing: return "snowflake"
+//        case .cold: return "cloud.snow.fill"
+//        case .mild: return "cloud.sun.fill"
+//        case .warm: return "sun.max.fill"
+//        case .hot: return "thermometer.sun.fill"
+//        case .unknown: return "questionmark.circle"
+//        }
+//    }
+//    
     
 
     var adviceText: String {
@@ -61,7 +61,7 @@ enum WeatherAdviceCategory: String {
         }
     }
 }
-
+// Nafiu Amosa Contribution
 func systemIcon(for openWeatherIcon: String) -> String {
     switch openWeatherIcon {
     case "01d": return "sun.max.fill"

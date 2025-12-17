@@ -23,7 +23,7 @@ class DateFormatterUtils {
 
     static let timeFormat: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "HH:mm:ss"
+        dateFormatter.dateFormat = "HH:mma"
         return dateFormatter
     }()
 
@@ -41,19 +41,31 @@ class DateFormatterUtils {
     
     static let weekdayMonthDay: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale.autoupdatingCurrent
         dateFormatter.dateFormat = "EEEE, MMM d"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+
         return dateFormatter
     }()
 
-    static func formattedWeekdayMonthDay(from timestamp: TimeInterval) -> String {
-        let date = Date(timeIntervalSince1970: timestamp)
+    static func formattedWeekdayMonthDay(from timestamp: TimeInterval, timezoneOffset: Int = 0) -> String {
+        let date = Date(
+            timeIntervalSince1970: (timestamp) + TimeInterval(
+                timezoneOffset
+            )
+        )
         return weekdayMonthDay.string(from: date)
     }
 
     static func formattedPrettyDateTimeWithZone(from timestamp: TimeInterval) -> String {
         let date = Date(timeIntervalSince1970: timestamp)
         return prettyDateTimeWithZone.string(from: date)
+    }
+    
+    static func formatedSunriseSunsetTime(from timestamp: TimeInterval) -> String {
+        let date = Date(timeIntervalSince1970: timestamp)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mma"
+        return timeFormat.string(from: date)
     }
 
     static func formattedDate(from timestamp: Int, format: String) -> String {
@@ -82,27 +94,32 @@ class DateFormatterUtils {
             dateFormatter.dateFormat = "hh:mm a"
             return dateFormatter.string(from: date)
     }
+    
+    static func formattedDate24Hour(from timestamp: TimeInterval) -> String {
+        let date = Date(timeIntervalSince1970: timestamp)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"   // 24-hour format
+        return dateFormatter.string(from: date)
+    }
 
     static func formattedDateWithDay(from timestamp: TimeInterval) -> String {
             let dateFormatter = DateFormatter()
 //             changed to meet coursework specifications
 //            dateFormatter.dateFormat = "h a E" // Format for 12-hour time with AM/PM and abbreviated day of the week
-            dateFormatter.dateFormat = "hh a E"
+            dateFormatter.dateFormat = "hh a E" //03 PM Wednesday
             let dateString = dateFormatter.string(from: Date(timeIntervalSince1970: timestamp))
             return dateString
     }
 
     static func formattedDateWithWeekdayAndDay(from timestamp: TimeInterval) -> String {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "EEEE dd"
+            dateFormatter.dateFormat = "EEEE dd" // Wednesday 12
             return dateFormatter.string(from: Date(timeIntervalSince1970: timestamp))
     }
 
 
     static func formattedDateTime(from timestamp: TimeInterval) -> String {
             let dateFormatter = DateFormatter()
-            //CAMILA: date is changed to fit coursework specifications
-//            dateFormatter.dateFormat = "d MMM yyyy 'at' ha"
             dateFormatter.dateFormat = "d MMM yyyy 'at' h a"
             return dateFormatter.string(from: Date(timeIntervalSince1970: timestamp))
     }

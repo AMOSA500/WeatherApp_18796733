@@ -1,0 +1,2 @@
+# Ignore WeatherAPI.swift so it never gets committed
+WeatherDashboardTemplate/Utility/WeatherAPI.swift

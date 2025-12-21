@@ -20,47 +20,14 @@ import Charts   // Include if you plan to show a chart later
 struct ForecastView: View {
     @EnvironmentObject var vm: MainAppViewModel
     
-    /// Converts forecast data into chart-friendly entries.
-    private var chartData: [TempData] {
-       // vm.forecast.flatMap { day in
-            [
-                // These are hard-wired data, real data will come from weather data fetched by your api
-                
-                TempData(
-                    time: Date(),
-                    type: "High",
-                    value: 24.5,
-                    category: .from(tempC: 24.5)
-                ),
-                TempData(
-                    time: Date(),
-                    type: "Low",
-                    value: 4.5,
-                    category: .from(tempC: 4.5)
-                ),
-                TempData(
-                    time: Calendar.current.date(byAdding: .day, value: 1, to: Date())!,
-                    type: "High",
-                    value: 19.0,
-                    category: .from(tempC: 19.0)
-                ),
-                TempData(
-                    time: Calendar.current.date(byAdding: .day, value: 2, to: Date())!,
-                    type: "Low",
-                    value: 5.5,
-                    category: .from(tempC: 5.5)
-                )
-                // TODO: add a "Low" entry or other data points if needed
-            ]
-       // }
-    }
     
     var body: some View {
+        ScrollView{
         VStack {
             // MARK: - Header Text
             VStack{
                 HStack{
-                    Text("8 Day Forecast - London")
+                    Text("8-Day Forecast - \(vm.activePlaceName)")
                         .font(.title)
                         .padding(.top)
                 }.frame(maxWidth: .infinity, alignment: .leading)
@@ -68,33 +35,58 @@ struct ForecastView: View {
                     Text("Daily High and Lows (°C)")
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }.padding(.horizontal, 20)
-            
-            // Bar chart
-            Chart(chartData) { data in
-                BarMark(
-                    x: .value("Day", data.time, unit: .day),
-                    y: .value("Temperature", data.value)
-                )
-                .foregroundStyle(data.category.color)
-                .position(by: .value("Type", data.type))
-            }
-           
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .day)) { value in
-                    AxisValueLabel(format: .dateTime.weekday(), centered: true)
-                    AxisGridLine(centered: true, stroke: StrokeStyle(lineWidth: 1, dash: [5, 5]))
+            if vm.dailyHighLowForecast.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "arrow.2.circlepath.circle")
+                        .font(.system(size: 40))
+                        .foregroundStyle(.secondary)
+                    Text("No weather forecast data yet")
+                        .font(.headline)
+                        .foregroundStyle(.secondary)
+                    Text("Search for a city to get started.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }else{
+                // Bar chart
+                
+                Chart(vm.dailyHighLowForecast) { item in
+                    BarMark(
+                        x: .value("Day", item.date, unit: .day),
+                        y: .value("Temperature", item.value),
+                        width: 20
+                    )
+                    .annotation(position: .top, spacing: -20){
+                        Text(String(Int(item.value))).foregroundStyle(Color.white)
+                    }
+                    .foregroundStyle(by: .value("Type", item.type.rawValue))
+                    .position(by: .value("Type", item.type.rawValue))
+                }
+                .chartForegroundStyleScale([
+                    "High": .red,
+                    "Low": .blue
+                ])
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .day)) { value in
+                        AxisValueLabel(
+                            format: .dateTime.weekday(.abbreviated),
+                            centered: true
+                        )
+                        AxisGridLine()
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks(position: .leading)
+                }
+                .frame(height: 260)
+                .padding()
+                
                 
             }
-            .chartYAxis{
-                AxisMarks(values: .stride(by: 10)){ value in
-                    AxisValueLabel()
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 1, dash: [5, 5]))
-                }
-            }
             
-            .frame(height: 250)
-            .padding()
+            
             Divider()
             
             HStack{
@@ -110,41 +102,59 @@ struct ForecastView: View {
                     .padding(.horizontal)
             }
             VStack{
-                ScrollView{
                     
-                        VStack{
-                            ForEach(1...5, id: \.self) { data in
+                    VStack{
+                        ForEach(vm.forecast) { data in
+                            var adviceCategory : WeatherAdviceCategory{
+                                return WeatherAdviceCategory
+                                    .from(temp: data.temperature, description: "")
+                            }
+                            HStack{
+                                HStack{
+                                    openWeatherIcon(data.icon)
+                                        .scaledToFit()
+                                        .frame(width: 80, height: 80)
+                                }.frame(alignment: .leading)
                                 VStack{
                                     HStack{
-                                        Text("Sunday, Oct 18").bold()
+                                        Text(DateFormatterUtils.formattedWeekdayMonthDay(from: TimeInterval(data.time))).bold()
                                     }.frame(maxWidth: .infinity, alignment: .leading)
                                     HStack{
-                                        Text("Expected a day with some rain").font(Font.caption.italic()).foregroundStyle(Color.gray)
+                                        Text(
+                                            adviceCategory.adviceText
+                                        )
+                                        .font(Font.subheadline.italic())
+                                        .foregroundStyle(Color.gray)
                                     }.frame(maxWidth: .infinity, alignment: .leading)
                                     HStack{
-                                        Text("Low: 1 °C High: 15 °C ")
+                                        Text("Low: \(String(format: "%0.1f" ,(data.tempMin))) °C High: \(String(format: "%0.1f" ,(data.tempMax))) °C ")
                                     }.frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                Divider()
+                                    
+                                }.frame(alignment: .trailing)
                             }
-                        }.frame(maxWidth: .infinity).padding()
-                            .background(
-                                ZStack{
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .stroke(Color.gray.opacity(0.2), style: StrokeStyle(lineWidth: 0.7))
-                                        .fill(.ultraThinMaterial.opacity(0.5))
-                                }
-                            )
-                            .scrollContentBackground(.automatic)
-                        
+                            
+                            Divider()
+                        }
+                    }.frame(maxWidth: .infinity).padding()
+                        .background(
+                            ZStack{
+                                RoundedRectangle(cornerRadius: 15)
+                                    .stroke(Color.gray.opacity(0.2), style: StrokeStyle(lineWidth: 0.7))
+                                    .fill(.ultraThinMaterial.opacity(0.5))
+                            }
+                        )
+                        .scrollContentBackground(.automatic)
                     
-                }
+                    
+                
             }.padding()
-
+        }
             
             Spacer()
         }.reusableSearchBar()
     }
+    
+    
 }
 
 #Preview {

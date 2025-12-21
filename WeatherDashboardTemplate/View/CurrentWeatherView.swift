@@ -42,8 +42,7 @@ struct CurrentWeatherView: View {
                     
                     Spacer()
                     
-                    Image(
-                        systemName: systemIcon(for: "\(vm.currentWeather?.weather[0].icon ?? "N/A")"))
+                    openWeatherIcon("\(vm.currentWeather?.weather[0].icon ?? "N/A")")
                         .font(.system(size: 60))
                         .padding(.horizontal,5)
                         .padding(.top, 10)
@@ -151,7 +150,7 @@ struct CurrentWeatherView: View {
                 Divider()
                 ZStack{
                     HStack(spacing: 10){
-                        Image(systemName: systemIcon(for: "\(vm.currentWeather?.weather[0].icon ?? "N/A")"))
+                        openWeatherIcon("\(vm.currentWeather?.weather[0].icon ?? "N/A")")
                             .font(.system(size: 60))
                             .padding(.horizontal,5)
                             .padding(.top, 10)

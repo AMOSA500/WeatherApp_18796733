@@ -13,7 +13,7 @@ import MapKit
 final class MainAppViewModel: ObservableObject {
     @Published var query = ""
     @Published var currentWeather: WeatherResponse?
-    @Published var forecast: [Weather] = []
+    @Published var forecast: [Forecast] = []
     @Published var pois: [AnnotationModel] = []
     @Published var mapRegion: MapCameraPosition = .automatic /// MKCoordinateRegion() is deprecated
     @Published var visited: [Place] = []
@@ -22,13 +22,61 @@ final class MainAppViewModel: ObservableObject {
     @Published var activePlaceName: String = ""
     private let defaultPlaceName: String
     @Published var selectedTab: Int = 0
-    //@Published var mapPosition: MKCoordinateRegion()
-    
+    private var dailyHighLow: [Forecast] = []
+        
+    /// Filtered forecast weather
+    var dailyHighLowForecast: [DailyTemperature] {
+        guard dailyHighLow.count >= 8 else { return [] }
+
+        // Group 3-hour forecasts by calendar day
+        let groupedByDay = Dictionary(grouping: dailyHighLow) { item in
+            Calendar.current.startOfDay(
+                for: Date(timeIntervalSince1970: TimeInterval(item.time))
+            )
+        }
+
+        // Take the first 8 days only
+        let sortedDays = groupedByDay.keys.sorted().prefix(8)
+
+        var result: [DailyTemperature] = []
+
+        for day in sortedDays {
+            guard let items = groupedByDay[day] else { continue }
+            let temps = items.map { $0.temperature }
+
+            if let minTemp = temps.min(),
+               let maxTemp = temps.max() {
+
+                result.append(
+                    DailyTemperature(
+                        date: day,
+                        type: .low,
+                        value: minTemp
+                    )
+                )
+
+                result.append(
+                    DailyTemperature(
+                        date: day,
+                        type: .high,
+                        value: maxTemp
+                    )
+                )
+            }
+        }
+
+        return result
+    }
+  
+    /// Initialise geocode
     let geocode = CLGeocoder()
     
     
     /// Create and use a WeatherService model (class) to manage fetching and decoding weather data
     private let weatherService = WeatherService()
+    
+    /// Create and use a ForecastService model (class) to manage fetching and decoding weather forecast data
+    private let forecastService = ForecastService()
     
     /// Create and use a LocationManager model (class) to manage address conversion and tourist places
     private let locationManager = LocationManager()
@@ -152,9 +200,15 @@ final class MainAppViewModel: ObservableObject {
             /// geocodes the fresh place name
             let coordinates = try await locationManager.geocodeAddress(byName)
             
-            /// Fetches weather data TODO:: Complete this section
+            /// Fetches weather data
             let weather = try await weatherService.fetchWeather(city: coordinates.name)
             self.currentWeather = weather
+            
+            /// Fetches forcast data
+            let decodedForecast = try await forecastService.fetchForecast(city: coordinates.name)
+            forecast = forecastService.filterSingleForecast(forecast: decodedForecast.list)
+            dailyHighLow = forecastService
+                .filterHighLowForecast(forecast: decodedForecast.list)
             
             
             /// Finds Points of Interest (POIs)
@@ -204,7 +258,7 @@ final class MainAppViewModel: ObservableObject {
         }
         
     }
-    
+    /// Used by Visited Place View
     func loadLocation(fromPlace place: Place) async {
         isLoading = true
         do {
@@ -278,7 +332,11 @@ final class MainAppViewModel: ObservableObject {
             /// Fetches weather data
             let weather = try await weatherService.fetchWeather(city: place.name)
             self.currentWeather = weather
-    
+            
+            /// Fetches forcast data
+            let decodedForecast = try await forecastService.fetchForecast(city: place.name)
+            forecast = forecastService.filterSingleForecast(forecast: decodedForecast.list)
+            dailyHighLow = forecastService.filterHighLowForecast(forecast: decodedForecast.list)
             
             // Move this place to top of visited (most recent)
             place.lastUsedAt = Date()
@@ -293,7 +351,8 @@ final class MainAppViewModel: ObservableObject {
                 // If not present for some reason, insert it at the front
                 visited.insert(place, at: 0)
             }
-
+            
+            // Must always run
             defer{
                 isLoading = false
             }
@@ -333,6 +392,8 @@ final class MainAppViewModel: ObservableObject {
         
         
     }
+    
+    
     
     
     

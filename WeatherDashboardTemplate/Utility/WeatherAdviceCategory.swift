@@ -53,7 +53,7 @@ enum WeatherAdviceCategory: String {
     var color: Color {
         switch self {
         case .freezing: return .blue
-        case .cold: return .cyan
+        case .cold: return .accentColor
         case .mild: return .green
         case .warm: return .orange
         case .hot: return .red

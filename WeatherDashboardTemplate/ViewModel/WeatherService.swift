@@ -50,31 +50,6 @@ final class WeatherService {
     
     
 
-    /*
-    func fetchCurrent(lat: Double, lon: Double) async throws -> Weather {
-        let response = try await fetchWeather(lat: lat, lon: lon)
-
-        // Prefer an explicit current if it exists (uncomment if your model adds it later)
-        // return response.current
-
-        // Fall back to the first daily item if available
-        if let firstDaily = (response as AnyObject).value(forKey: "daily") as? [Weather], let day = firstDaily.first {
-            return day
-        }
-
-        // Or fall back to the first hourly item if available
-        if let firstHourly = (response as AnyObject).value(forKey: "hourly") as? [Weather], let hour = firstHourly.first {
-            return hour
-        }
-        // If your WeatherResponse defines another suitable property, adapt here accordingly
-        throw WeatherMapError.decodingError(NSError(domain: "WeatherService", code: 0, userInfo: [NSLocalizedDescriptionKey: "WeatherResponse does not contain a current, daily, or hourly weather item."]))
-    }*/
-    /** MARK: - Convenience APIs used by the ViewModel
-    func fetchForecast(lat: Double, lon: Double) async throws -> [Weather] {
-        let response = try await fetchWeather(lat: lat, lon: lon)
-        // If WeatherResponse has `daily: [Weather]`, return it. Otherwise adapt as needed.
-        return response.daily
-    }
-     **/
+    
 }
 

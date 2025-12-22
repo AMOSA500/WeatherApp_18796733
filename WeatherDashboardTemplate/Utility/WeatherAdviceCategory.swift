@@ -46,7 +46,7 @@ enum WeatherAdviceCategory: String {
         case .hot:
             return "Very hot today! Stay hydrated, wear light clothing, and apply sunscreen."
         case .unknown:
-            return "Weather is unpredictable — dress in layers and check before heading out."
+            return "loading data..."
         }
     }
 

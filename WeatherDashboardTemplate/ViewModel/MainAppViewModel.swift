@@ -136,10 +136,24 @@ final class MainAppViewModel: ObservableObject {
             let coord = location.coordinate
             mapRegion = .region(
                 MKCoordinateRegion(
-                    center: coord,
+                    center: CLLocationCoordinate2D(
+                        latitude: coord.latitude,
+                        longitude: coord.longitude
+                    ),
                     span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
                 )
             )
+            
+            /// Fetches weather data
+            let weather = try await weatherService.fetchWeather(city: defaultPlaceName)
+            self.currentWeather = weather
+            
+            /// Fetches forcast data
+            let decodedForecast = try await forecastService.fetchForecast(city: defaultPlaceName)
+            forecast = forecastService.filterSingleForecast(forecast: decodedForecast.list)
+            dailyHighLow = forecastService
+                .filterHighLowForecast(forecast: decodedForecast.list)
+            
             activePlaceName = defaultPlaceName
             
             pois = try await locationManager

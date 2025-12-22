@@ -38,14 +38,12 @@ struct CurrentWeatherView: View {
                     Text("\(Int(vm.currentWeather?.main.temp ?? 0)) °C")
                         .font(.system(size: 60, design: .rounded))
                         .bold()
-                        .padding(.top, 10)
                     
                     Spacer()
                     
                     openWeatherIcon("\(vm.currentWeather?.weather[0].icon ?? "N/A")")
                         .font(.system(size: 60))
                         .padding(.horizontal,5)
-                        .padding(.top, 10)
                         .foregroundStyle(category.color)
                 }
                 // Rain condition
@@ -54,10 +52,10 @@ struct CurrentWeatherView: View {
                         "\(vm.currentWeather?.weather[0].description ?? "N/A")".capitalized
                     )
                         .bold()
-                        .font(.system(size: 24))
+                        .font(.system(size: 14))
                     Spacer()
-                    Text("Wind: \(String(format: "%.1f", vm.currentWeather?.wind?.speed ?? 0.0)) m/s")
-                }.padding(.horizontal,10).padding(.top, 1)
+                    Text("Wind: \(String(format: "%.1f", vm.currentWeather?.wind?.speed ?? 0.0)) m/s").font(.system(size: 14))
+                }.padding(.horizontal,10)
                 
                 // High and Low condition
                 HStack(spacing: 30){
@@ -151,16 +149,15 @@ struct CurrentWeatherView: View {
                 ZStack{
                     HStack(spacing: 10){
                         openWeatherIcon("\(vm.currentWeather?.weather[0].icon ?? "N/A")")
-                            .font(.system(size: 60))
+                            .font(.system(size: 50))
                             .padding(.horizontal,5)
-                            .padding(.top, 10)
                             .foregroundStyle(.green)
                         
                         Text(category.adviceText)
-                            .font(Font.system(size: 14))
+                            .font(.callout.bold())
                         
                     }.frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(5)
+                        .padding(0)
                     
                     
                 }.background(

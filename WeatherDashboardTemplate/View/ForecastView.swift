@@ -28,11 +28,11 @@ struct ForecastView: View {
             VStack{
                 HStack{
                     Text("8-Day Forecast - \(vm.activePlaceName)")
-                        .font(.title)
+                        .font(.title3)
                         .padding(.top)
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 HStack{
-                    Text("Daily High and Lows (°C)")
+                    Text("Daily High and Lows (°C)").font(.footnote)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }.padding(.horizontal, 20)
             if vm.dailyHighLowForecast.isEmpty {
@@ -59,7 +59,9 @@ struct ForecastView: View {
                         width: 20
                     )
                     .annotation(position: .top, spacing: -20){
-                        Text(String(Int(item.value))).foregroundStyle(Color.white)
+                        Text(String(Int(item.value)))
+                            .foregroundStyle(Color.white)
+                            .font(.system(size: 10))
                     }
                     .foregroundStyle(by: .value("Type", item.type.rawValue))
                     .position(by: .value("Type", item.type.rawValue))
@@ -78,7 +80,7 @@ struct ForecastView: View {
                     }
                 }
                 .chartYAxis {
-                    AxisMarks(position: .leading)
+                    AxisMarks(position: .trailing)
                 }
                 .frame(height: 260)
                 .padding()

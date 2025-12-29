@@ -13,6 +13,7 @@ struct WeatherDashboardTemplateApp: App {
     
     // code to set configure ViewModel and ModelContainer
     @StateObject private var vm: MainAppViewModel
+    @State private var isActive = false
     private let container: ModelContainer
     init() {
         
@@ -32,12 +33,34 @@ struct WeatherDashboardTemplateApp: App {
     
     var body: some Scene {
         WindowGroup {
-
+            if isActive {
                 NavBarView()
                     .environmentObject(vm)
                 //  Attach the same persistent container (not a new one!)
                     .modelContainer(container)
-            
+            } else {
+                ZStack {
+                    // SplashView() - My alternative to launch screen
+                    Color(.systemBackground)
+                        .ignoresSafeArea()
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .progressViewStyle(.circular)
+                        Text("Loading…")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .onAppear {
+                    // Sets the 3-second delay
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        withAnimation {
+                            self.isActive = true
+                        }
+                    }
+                }
+            }
                 
         }
     }

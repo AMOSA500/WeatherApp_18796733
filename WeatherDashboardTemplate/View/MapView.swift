@@ -26,9 +26,10 @@ struct MapView: View {
                 
             // Text detail
             HStack(spacing: 0){
-                Text("Top 5 Tourist attractions in ")
-                Text("\(vm.activePlaceName)").bold().foregroundStyle(.blue)
-                    .padding(.vertical, 20)
+                Text("Top 5 Tourist attractions in ").font(.footnote)
+                Text("\(vm.activePlaceName)").bold().foregroundStyle(.red).font(.footnote)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10)
             }.frame(maxWidth: .infinity).background(Color(.blue).opacity(0.3)).padding(.top, -08).foregroundColor(Color.white).bold()
             
             // Place of Interest List
@@ -50,19 +51,15 @@ struct MapView: View {
                                 Image(systemName: "mappin.circle.fill")
                                     .foregroundColor(Color.yellow)
                                     .scaleEffect(1.0) // base
-                                Text(poi.name)
+                                Text(poi.name) // location name
                                     .foregroundColor(Color.white)
                             }
-                            .listRowBackground(Color.black.opacity(0.4))
-                            .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
                             .padding(.horizontal, 30)
-                            // Subtle press feedback
-                            .contentShape(Rectangle())
                             .animation(.easeInOut(duration: 0.2), value: vm.selectedTab)
                         }
                         .buttonStyle(.plain)
                         .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
+                        .listRowInsets(EdgeInsets(top: 1, leading: 10, bottom: 1, trailing: 8))
                         // Row appear animation
                         .transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.96)),
                                                 removal: .opacity))

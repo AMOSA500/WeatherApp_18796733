@@ -19,6 +19,8 @@ final class MainAppViewModel: ObservableObject {
     @Published var visited: [Place] = []
     @Published var isLoading = false
     @Published var appError: WeatherMapError?
+    @Published var isShowAlert: Bool = false
+    @Published var showAlertMessage = ""
     @Published var activePlaceName: String = ""
     private let defaultPlaceName: String
     @Published var selectedTab: Int = 0
@@ -177,23 +179,13 @@ final class MainAppViewModel: ObservableObject {
         }
         /// Check if already visited
         if let place = visited.first(where: { $0.name == trimmed }) {
-            try await loadAll(for: place)
             place.lastUsedAt = Date()
             try context.save()
+            try await loadAll(for: place)
             
             self.activePlaceName = place.name
-            mapRegion = .region(
-                MKCoordinateRegion(
-                    center: CLLocationCoordinate2D(
-                        latitude: place.latitude,
-                        longitude: place.longitude
-                    ),
-                    latitudinalMeters: 0.1,
-                    longitudinalMeters: 0.1
-                )
-            )
-            pois = try await locationManager
-                .findPOIs(lat: place.latitude, lon: place.longitude, limit: 5)
+            isShowAlert = true
+            showAlertMessage = "Location was loaded from storage"
             defer{
                 isLoading = false
             }
@@ -209,7 +201,6 @@ final class MainAppViewModel: ObservableObject {
         do{
             ///  This lets the UI show a spinner or overlay while work is happening.
             isLoading = true
-            
             
             /// geocodes the fresh place name
             let coordinates = try await locationManager.geocodeAddress(byName)
@@ -269,6 +260,7 @@ final class MainAppViewModel: ObservableObject {
             defer{
                 isLoading = false
             }
+            await loadDefaultLocation()
         }
         
     }

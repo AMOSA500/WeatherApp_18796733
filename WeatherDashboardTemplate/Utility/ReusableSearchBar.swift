@@ -19,7 +19,7 @@ struct ReusableSearchBar: ViewModifier {
                 startPoint: .bottomLeading,
                 endPoint: .topTrailing
             ).ignoresSafeArea()
-            .edgesIgnoringSafeArea(.all)
+                .edgesIgnoringSafeArea(.all)
             
             VStack(spacing: 0) {
                 // 🔍 Search Bar
@@ -46,6 +46,10 @@ struct ReusableSearchBar: ViewModifier {
                 
                 // Content from any view appears here
                 content.background(Color.clear)
+                    .onTapGesture {
+                        // Hide the keyboard
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
             }
             
         }
@@ -63,6 +67,12 @@ struct ReusableSearchBar: ViewModifier {
                 message: Text(error.localizedDescription),
                 dismissButton: .default(Text("OK"))
             )
+        }
+        
+        .alert("Search Response", isPresented: $vm.isShowAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(vm.showAlertMessage)
         }
     }
 }

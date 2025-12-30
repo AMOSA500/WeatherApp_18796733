@@ -14,8 +14,8 @@
             filePath = "WeatherDashboardTemplate/ViewModel/MainAppViewModel.swift"
             startingColumnNumber = "62"
             endingColumnNumber = "62"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "init(context:defaultPlaceName:)"
             landmarkType = "7">
          </BreakpointContent>

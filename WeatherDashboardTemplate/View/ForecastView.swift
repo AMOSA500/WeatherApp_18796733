@@ -153,6 +153,7 @@ struct ForecastView: View {
         }
             
             Spacer()
+            
         }.reusableSearchBar()
     }
     

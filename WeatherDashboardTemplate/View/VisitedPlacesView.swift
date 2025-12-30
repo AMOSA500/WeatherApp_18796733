@@ -1,5 +1,5 @@
 //
-//  VisitedPLacesView.swift
+//  VisitedPlacesView.swift
 //  WeatherDashboardTemplate
 //
 //  Created by girish lukka on 18/10/2025.
@@ -8,26 +8,20 @@
 import SwiftUI
 import SwiftData
 
-
 struct VisitedPlacesView: View {
     @EnvironmentObject var vm: MainAppViewModel
     @Environment(\.modelContext) private var context
     @State private var formatMyDate: DateFormatterUtils = DateFormatterUtils()
     
-    
-
-    // MARK:  add local variables for this view
-
-
     var body: some View {
         VStack {
             HStack {
                 Text("Visited Places 📍")
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(20)
-                    .font(.system(size: 32)).bold()
+                    .font(.system(size: 32).bold())
             }
-
+            
             if vm.visited.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "mappin.slash")
@@ -39,56 +33,64 @@ struct VisitedPlacesView: View {
                     Text("Search for a city to get started.")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                    
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List {
                     ForEach(vm.visited) { place in
-                        
                         Button {
                             Task { await vm.loadLocation(fromPlace: place) }
                             vm.selectedTab = 2
-                        } label: {
                             
+                            let name = place.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+
+                            let urlString = "https://www.google.com/maps/search/?api=1&query=\(name)"
+                            if let url = URL(string: urlString) {
+                                UIApplication.shared.open(url)
+                            }
+                        } label: {
                             HStack {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(place.name).bold()
+                                    Text(place.name)
+                                        .bold()
                                         .font(.subheadline)
-                                    Text("Lat: \(place.latitude) - Lon: \(place.longitude)").foregroundStyle(.secondary)
-                                    if let last = (Optional(place.lastUsedAt)) {
-                                        Text(
-                                            DateFormatterUtils.prettyDateTimeWithZone
-                                                .string(from: last)
-                                        ).foregroundStyle(.secondary)
+                                    
+                                    Text("Lat: \(place.latitude, specifier: "%.4f") - Lon: \(place.longitude, specifier: "%.4f")")
+                                        .foregroundStyle(.secondary)
+                                        .font(.caption)
+                                    
+                                    if let last = Optional(place.lastUsedAt) {
+                                        Text(DateFormatterUtils.prettyDateTimeWithZone.string(from: last))
+                                            .foregroundStyle(.secondary)
+                                            .font(.caption)
                                     }
-
                                 }
                                 Spacer()
-                               
-                            }.padding(10)
-                            
+                                
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.secondary.opacity(0.3))
+                            }
+                            .padding(10)
                         }
                         .buttonStyle(.plain)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
-                       
+                        
                     }
-                    
                     .onDelete { indexSet in
                         for index in indexSet {
                             let place = vm.visited[index]
                             vm.delete(place: place)
                         }
                     }
-                    
                 }
                 .listStyle(.plain)
-                // list is up-to-date and sorted whenever it appears
+                // Keep list sorted by lastUsedAt
                 .onAppear {
                     withAnimation {
                         vm.visited = vm.visited.sorted {
-                            ($0.lastUsedAt) > ($1.lastUsedAt)
+                            ($0.lastUsedAt) > (
+                                $1.lastUsedAt)
                         }
                     }
                 }
